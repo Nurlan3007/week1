@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: week1
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5438:5432"
+
+  web:
+    build: .
+    container_name: python-app
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=week1
+      - DB_USER=postgres
+      - DB_PASSWORD=root
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    command: python test.py
